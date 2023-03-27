@@ -40,3 +40,6 @@ def test_main():
 		s_numpy=cbrt(x)
 		print("cubertNT s = %20.15e, numpy s = %20.15e" %(s,s_numpy))
 		assert abs(s-s_numpy) < 1e-14, "Your cbrt does not agree with numpy cbrt"
+
+
+test_main()
