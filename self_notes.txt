@@ -1,0 +1,436 @@
+Moores's law:
+
+Processing power doubles every 18 months.
+Current: No. of cores doubles every 18 months.
+
+Kilo = thousand (10^3) 
+Mega = million (10^6) 
+Giga = billion (10^9) 
+Tera = trillion (10^12) 
+Peta = 10^15
+Exa = 10^18
+
+Python
+======
+
+Two's complement is used.
+
+Python integer: 4 bytes
+
+Python - larger integers can be stored and will automatically be stored using more bytes.
+
+Python real numbers use 64 bits.
+
+	N bits integer part, M bits in fractional part
+
+Base 10 scientific notation:
+
+	0.2345e-18= 0.2345 × 10−18 = 0.0000000000000000002345
+
+	Mantissa: 0.2345, Exponent: −18
+
+
+Binary floating point numbers:
+	Example: Mantissa: 0.101101, Exponent: −11011 means: 
+
+	0.101101 = 1(2−1) + 0(2−2) + 1(2−3) + 1(2−4) + 0(2−5) + 1(2−6)
+	= 0.703125 (base 10)
+
+	−11011= −1(2^4)+ 1(2^3)+ 0(2^2)+ 1(2^1)+ 1(2^0)= −27(base10) So the number is
+	0.703125 × 2−27 ≈ 5.2386894822120667 ×10−9
+
+
+Python float is 8 bytes with IEEE standard (754) representation. 53 bits for mantissa and 11 bits for exponent (64 bits = 8 bytes). We can store 52 binary bits of precision.
+
+	2^-52 ≈ 2.2 × 10−16 =⇒ roughly 15 digits of precision.
+
+Note: storage and arithmetic is done in base 2 Converted to base 10 only when printed!
+
+
+
+
+Server-client model: (ex SVN, CVS)
+	Original style, still widely used (e.g. CVS, Subversion) One central repository on server.
+	Developers’ workflow (simplified!):
+		• Check out a working copy,
+		• Make changes, test and debug,
+		• Check in (commit) changes to repository (with comments).
+		This creates new version number.
+		• Run an update on working copy to bring in others’
+		changes.
+
+	The system keeps track of diffs from one version to the next (and info on who made the changes, when, etc.)
+	A changeset is a collection of diffs from one commit.
+
+	Only the server has the full history. The working copy has:
+		• Latest version from repository (from last checkout, commit, or update)
+		• Your local changes that are not yet committed. Note:
+		• You can retrieve older versions from the server.
+		• Can only commit or update when connected to server.
+		• When you commit, it will be seen by anyone else who does an update from the repository.
+
+	Often there are trunk and branches subdirectories.
+
+
+Distributed version control:
+
+	Git uses a distributed model:
+		- git commit commits to your clone’s .git directory.
+		• git push sends your recent changesets to another clone by default: the one you cloned from (e.g. bitbucket),
+		but you can push to any other clone (with write permission).
+		• git fetch pulls changesets from another clone
+		by default: the one you cloned from (e.g. bitbucket)
+		• git merge applies changesets to your working copy
+
+
+
+	Advantages of distributed model:
+		• You can commit changes, revert to earlier versions, examine history, etc. without being connected to server.
+		• Also without affecting anyone else’s version if you’re working collaboratively. Can commit often while debugging.
+		- No problem if server dies, every clone has full history.
+
+
+		For collaboration will still need to push or fetch changes eventually and git merge may become more complicated.
+
+
+
+
+Bash
+-----
+
+
+1. Sort by size:
+ls -latSh shell-lesson-data/exercise-data/proteins 
+
+ls -l | sort -k 5nr : Sort on the 5th column 
+
+ls -l | sort -g -k 5 -r
+
+
+ls -lS
+
+2. Find the largest file in a directory: 
+		ls -Sh shell-lesson-data/exercise-data/proteins  | head -n 1 
+
+3. Find the count of files and folder in the directory
+
+count=`ls -l |wc -l | awk '{$1=$1;print}'`
+echo "the number of files in the folder is $count" > file_count.txt
+
+
+4. Find the count of files in the directory
+
+	find ../ -type f -maxdepth 1 |wc -l | awk '{$1=$1;print}'
+
+
+5. Find the count of directory in the directory
+
+	find ../ -type d -maxdepth 1 |wc -l | awk '{$1=$1;print}'
+
+
+
+6. List the largest file in the folder shell-novice/shell- lesson-data/exercise-data/proteins, print its name, then copy it a new folder called largest.
+
+	echo cp $(ls -S | head -1) ./largest
+
+7. Count the number of files and directories in a given folder.
+Generate a new file with the text: “the number of files in
+the folder is xx”.
+
+	echo The number of the files is $(ls | wc -w) > blah.txt
+
+8. Write a bash script/loop to create a file that contains the
+second last line of all pdb files available in a folder
+
+	for filename in *.pdb
+	do
+	tail -2 $filename | head -1 >> tt.txt Done
+
+9. In a folder containing 10 files, write a bash script to
+prepend the name of each file with the year it was
+created.
+	for filename in *.pdb; do echo mv $filename $(ls -lT $filename | cut -w -f 9)-$filename; done
+
+
+10. What does this command do: cut -d, -f 2 animals.csv | sort | uniq –c? animals.csv is in shell-novice/shell-lesson-data/exercise-data/animal-counts
+
+	2012-11-05,deer,5
+	2012-11-05,rabbit,22
+	2012-11-05,raccoon,7
+	2012-11-06,rabbit,19
+	2012-11-06,deer,2
+	2012-11-06,fox,4
+	2012-11-07,rabbit,16
+	2012-11-07,bear,1
+
+11. You have a set of 20 text files and would like to concatenate them into one super text file.
+	for filename in *.pdb do
+		echo ${filename}
+		cat ${filename} >> total.pdb
+	done
+
+12. Write a script that prints the name of the file with the longest name in a given directory.
+
+	for line in $(ls); do echo ${#line} ${line} >> namelen.txt; done
+	cat namelen.txt | sort | head -n 1 | cut -d ' ' -f 1
+
+Python
+=======
+
+1. Every “variable” is really just a pointer to some object. You can reset it to point to some other object at will.
+So variables don’t have “type” (e.g. integer, float, string). (But the objects they currently point to do.)
+
+
+
+2. >>> x = 3.4
+>>> print id(x), type(x) # id() returns memory
+8645588 <type ’float’>
+
+
+
+3. Note: Object of type ’list’ has a method ’append’ that changes the object.
+
+
+4. integers and floats are immutable
+
+
+5. from numpy import sqrt
+
+6. Multiplication repeats:
+	>>> x = [2., 3.] >>> 2*x
+	[2.0, 3.0, 2.0, 3.0]
+
+7. Addition concatenates:
+	>>> y = [5., 6.] >>> x+y
+	[2.0, 3.0, 5.0, 6.0]
+
+8. Numpy arrays use component-wise multiplication.
+
+9. Unlike lists, all elements of an np.array have the same type
+
+10. Can explicitly state desired data type:
+	x = np.array([1, 2, 3], dtype=complex) >>> print x
+	[ 1.+0.j, 2.+0.j, 3.+0.j]
+
+11. NumPy arrays for vectors and matrices 
+
+12. For Linear algebra, may instead want to use numpy.matrix: 
+	>>> A = np.matrix([[1.,2], [3,4], [5,6]]) 
+
+13. Matlab style (as a string that is converted):
+	>>> A = np.matrix("1.,2; 3,4; 5,6") >>> A
+	matrix([[1., 2.], [3., 4.],
+	[5., 6.]])
+
+14. For linear algebra matrix may be easier (and more like Matlab), but vectors need two subscripts!
+
+15. For most other uses, arrays more natural, e.g.
+>>> x = np.linspace(0., 3., 100) # 100 points >>> y = x**5 - 2.*sqrt(x)*cos(x) # 100 values >>> plot(x,y)
+np.linspace returns an array, which is what is needed here. We will always use arrays.
+
+16. The rank of an array is the number of subscripts it takes:  
+	This is not the rank of the matrix in the linear algebra sense (dimension of the column space)!
+
+	A two dimensional matrix has rank = 2
+
+	Scalars have rank 0: z = np.array(7.) 
+
+
+	NumPy arrays of any dimension are supported, e.g. rank 3:
+		>>> T = np.ones((2,2,2)) 
+		>>> T
+		array([[[1., 1.], [1., 1.]],
+		[[1., 1.], [1., 1.]]])
+
+		>>> T[0,0,0] 1.0
+
+17. Linear algebra with NumPy
+
+	>>> A = np.array([[1., 2.], [3, 4]]) 
+	>>> A
+	array([[1., 2.],
+	[3., 4.]])
+
+	>>> b = np.dot(A, np.array([8., 9.])) >>> b
+	array([ 26., 60.])
+
+	Now solve Ax = b:
+	>>> from numpy.linalg import solve 
+
+	>>> solve(A,b)
+	array([ 8., 9.])
+
+
+
+	from numpy.linalg import eig
+
+	>>> eig(A) # returns a tuple (evals,evecs)
+	(array([-0.37228132, 5.37228132]),
+	array([[-0.82456484, -0.41597356], [ 0.56576746, -0.90937671]]))
+
+	>>> evals, evecs = eig(A) # unpacks tuple
+
+	>>> evals
+	array([-0.37228132, 5.37228132])
+
+	>>> evecs
+	array([[-0.82456484, -0.41597356],
+	[ 0.56576746, -0.90937671]])
+
+
+
+18. Formating
+	f-string format
+
+
+19. Quadrature (numerical integration)
+
+	from scipy.integrate import quad
+
+	Estimate Integrate [x = 0 to 2] 𝑥 d𝑥= 8/3
+
+	>>> quad(lambda x: x**2, 0., 2.) (2.666666666666667, 2.960594732333751e-14)
+
+	returns (value, error estimate).
+
+
+20. Write a function to calculate the exponential using the exponential series
+	• The function should take the number of terms of the series as an argument, use default of 100
+	• Check the convergence of the series
+
+
+
+21. Exponential series code: refer to 
+
+
+HPC
+====
+Login:
+
+ssh ptd2210@10.8.1.19 
+
+
+scl enable rh-python36 bash
+
+pip3 install --user --proxy=10.8.0.1:8080 --upgrade pip
+
+pip3 install --user --proxy=10.8.0.1:8080 --upgrade virtualenv 
+
+qsub to run any script
+
+
+
+
+----------
+Fortran
+----------
+
+print *, ...: The * means no special format specified As a result all available digits of z will be printed.
+
+First declaration of variables then executable statements 
+
+• implicit none means all variables must be declared
+
+• 3.d0means 3 × 100 in double precision (8 bytes) 
+• 2.d-1 means 2 × 10−1 = 0.2
+
+
+The statement
+    implicit none
+means all variables must be explicitly declared.
+
+
+- parameter used to indicate a variable value not to be changed
+
+- dimension(n) :: x, y means these are arrays of length n. 
+
+
+Data types for the most part there will be only three basic types of data you will
+have to deal with, integers, floating point numbers and characters. In fortran
+these data types are declared as
+
+integer 
+	exact whole numbers (-3, 0, 5 234), usually stored in 4 bytes
+
+real 
+	inexact representation of decimal numbers (3.1415, 27.2, 1.e23). Usually stored as 4 bytes, good for about 6-9 significant digits, ranges from
+about 10−38–1038
+
+double precision 
+	same as real but much larger range and precision.
+	Usually stored as 8 bytes, good for about 15-17 significant digits, ranges
+	from about 10−308–10308. You can get more precision than this but you
+	should have a good reason.
+
+character, character*n 
+	either a single character or a string of characters of length n.
+
+
+logical
+	Boolean
+
+Constant and Variable names A constant or variable can have any name with
+up to 32 characters (To play it safe though, Standard Fortran allows only
+6 characters). The name must start with a letter, but can have most of the
+
+
+Booleans: .true. Comparisons:
+
+< or .lt. > or .gt. == or .eq.
+
+Examples:
+.false.
+<= or .le. >= or .ge. /= or .ne.
+if ((i >= 5) .and. (i < 12)) then
+if (((i .lt. 5) .or. (i .ge. 12)) .and. & (i .ne. 20)) then
+
+Note: & is the Fortran continuation character. Statement continues on next line.
+
+
+
+Functions:
+	Functions take some input arguments and return a single value. 
+
+	Usage: y = f(x) or z = g(x,y)
+
+
+	Should be declared as external with the type of value returned: 
+
+	real(kind=8), external :: f
+
+
+
+	function input variable 
+
+
+	real(kind=8), intent(in) :: x
+
+
+Subroutines:
+
+	Subroutines have arguments, each of which might be for input or output or both.
+	
+	Usage: call sub1(x,y,z,a,b)
+
+	Can specify the intent of each argument, e.g.
+
+	real(kind=8), intent(in) :: x,y 
+	real(kind=8), intent(out) :: z 
+	real(kind=8), intent(inout) :: a,b
+
+
+	specifies that x, y are passed in and not modified,
+	z may not have a value coming in but will be set by sub1, a, b are passed in and may be modified.
+	After this call, z, a, b may all have changed.
+
+
+Arrays:
+	x = (/10.,20.,30./)
+
+	print *, "x**2 + y = " ->> component wise operation
+
+
+
+	
+
+
