@@ -47,7 +47,16 @@ Python float is 8 bytes with IEEE standard (754) representation. 53 bits for man
 Note: storage and arithmetic is done in base 2 Converted to base 10 only when printed!
 
 
+- The np.reshape method can go through data in either order: column or row
 
+- The np.flatten method converts an N-dim array to a 1-dimensional one
+
+
+
+
+=================
+Version control
+=================
 
 Server-client model: (ex SVN, CVS)
 	Original style, still widely used (e.g. CVS, Subversion) One central repository on server.
@@ -406,6 +415,9 @@ Functions:
 	real(kind=8), intent(in) :: x
 
 
+	z = f(y)
+
+
 Subroutines:
 
 	Subroutines have arguments, each of which might be for input or output or both.
@@ -424,13 +436,160 @@ Subroutines:
 	After this call, z, a, b may all have changed.
 
 
+
+	call fsub(y,z)
+
+
+String:
+	character(len=10) :: my_string
+    
+    my_string = 'Hello'
+
+
 Arrays:
 	x = (/10.,20.,30./)
 
 	print *, "x**2 + y = " ->> component wise operation
 
 
+	print *, sqrt(y) ! componentwise
 
+
+	print *, dot_product(x,y) ! scalar product
+
+
+	program arrayops
+		implicit none
+		real(kind=8), dimension(3,2) :: a
+		...
+		! create a as 3x2 array:
+		A = reshape((/1,2,3,4,5,6/), (/3,2/))
+
+
+	Fortran is case insensitive: A = a
+
+
+	Reshape fills array by columns
+
+
+	real(kind=8), dimension(3,2) :: a 
+	real(kind=8), dimension(2,3) :: b 
+	real(kind=8), dimension(3,3) :: c
+	integer :: i
+
+	print *, "a = " do i=1,3
+	print *, a(i,:) enddo
 	
+	b = transpose(a) 
+	c = matmul(a,b)
+
+
+Linear system:
+	LAPACK underhood library subroutine
+
+
+	Rank 1 arrays have a single index, for example: real(kind=8) :: x(3)
+	real(kind=8), dimension(3) :: x
+
+
+Provide user customized indexing
+	real(kind=8) :: x(0:2), y(4:6), z(-2:0)
+	
+These are all arrays of length 3 and this would be a valid assignment: y(5) = z(-2)
+
+
+Dynamic memory allocation:
+	Fortran 90 allows dynamic memory allocation.
+
+
+	real(kind=8) dimension(:), allocatable :: x 
+	real(kind=8) dimension(:,:), allocatable :: a
+
+	allocate(x(10)) 
+	allocate(a(30,10))
+	deallocate(x) 
+	deallocate(a)
+
+
+	If you might run out of memory, use optional argument stat to return the status...
+
+	allocate(a(30000,10000), stat=alloc_error)
+
+
+Fortran bugs
+
+	Debugging segmentation faults can be difficult.
+	Tip: Compile using -fbounds-check flag of gfortran.
+	This catches some cases when you try to access an array out of bounds.
+
+
+
+size() to find the size of a variable
+
+
+Fortran modules:
+
+	module <MODULE-NAME>
+	! Declare variables
+
+	contains
+	! Define subroutines or functions
+
+	end module <MODULE-NAME>
+
+	A program/subroutine/function can use this module:
+
+	program <NAME>
+
+	use <MODULE-NAME>
+	! Declare variables
+
+	! Executable statements
+
+	end program <NAME>
+
+	Can also specify a list of what variables/subroutines/functions from module to be used.
+
+
+	program <NAME>
+		use <MODULE-NAME>, only: <LIST OF SYMBOLS> ! Declare variables
+		! Executable statements
+	end program <NAME>
+
+
+
+	the module must be compiled before any subroutine or program that uses it!
+
+
+	global variables to be mentioned in the module
+
+	save keyword to save once a subroutine/function updates the global variable
+
+
+
+
+
+==========
+MakeFiles
+==========
+	
+
+	target: dependencies
+	<TAB> command(s) to make target
+
+
+	Important to use tab character, not spaces!! Warning: Some editors replace tabs with spaces!
+
+
+	Typing “make target” means:
+		1 Make sure all the dependencies are up to date (those that are also targets)
+		2 If target is older than any dependency, recreate it using the specified commands.
+
+	These rules are applied recursively!
+
+
+	echo means print out the string.
+	@echo means print out the string but don’t print the command.
+
 
 
