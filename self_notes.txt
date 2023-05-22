@@ -340,7 +340,7 @@ First declaration of variables then executable statements
 
 • implicit none means all variables must be declared
 
-• 3.d0means 3 × 100 in double precision (8 bytes) 
+• 3.d0means 3 × 10^0 in double precision (8 bytes) 
 • 2.d-1 means 2 × 10−1 = 0.2
 
 
