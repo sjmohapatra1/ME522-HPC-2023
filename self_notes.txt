@@ -593,3 +593,46 @@ MakeFiles
 
 
 
+OpenMP
+------
+	implicit barrier at the end of the for loop
+
+	No barrier
+
+		!omp end parallel do nowait 
+
+	Private:
+		!$omp parallel do private(i)
+
+	
+	Reductions:
+		norm = 0.d0
+		!$omp parallel do reduction(+ : norm)
+		do i=1,n
+			norm = norm + abs(x(i))
+			enddo
+
+
+		!$omp parallel do reduction(operator : list)
+
+
+Unix time command:
+	real = wall clock
+	user = cpu time spent on Processing
+	sys = system time
+======
+MPI 
+======
+If after parallisation, real>cpu time then it is worse than the serial code
+
+
+	points_per_proc = (n + numprocs - 1)/numprocs
+
+    ! Determine start and end index for this proc's points
+    istart = proc_num * points_per_proc + 1
+    iend = min((proc_num + 1)*points_per_proc, n)
+
+/loc_to_mpi/use/local/bin/mpif90 pisum1.f90
+/loc_to_mpi/use/local/bin/mpiexec -n 2 pisum1.f90
+or
+/loc_to_mpi/use/local/bin/mpirun -n 2 pisum1.f90
