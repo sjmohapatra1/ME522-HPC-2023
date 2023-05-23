@@ -636,3 +636,121 @@ If after parallisation, real>cpu time then it is worse than the serial code
 /loc_to_mpi/use/local/bin/mpiexec -n 2 pisum1.f90
 or
 /loc_to_mpi/use/local/bin/mpirun -n 2 pisum1.f90
+
+
+
+
+
+HPC
+-----
+
+
+qsub Submit a job -P project_name Specifying a project name
+qsub -I Submit an interactive job -q destination Specifying queue and/or server
+qsub -IX Submit an interactive job with X forwarding -r value Marking a job as rerunnable or not
+qstat <jobid> Job status -W depend = list Specifying job dependencies
+qstat -Q Print Queue information -W stagein=list stageout=list Input/output file staging
+qhold <jobid> Hold a job -W sandbox=<value> Staging and execution directory: user's home vs. job-specific
+qrls <jobid> Release a job -a date_time Deferring execution
+pbsnodes -a Print node information -c interval Specifying job checkpoint interval
+pbsnodes -l Print nodes that are offline or down -e path Specifying path for output and error files
+qstat -B Cluster status -h Holding a job (delaying execution)
+qdel Delete a job -J X-Y[:Z} Defining job array
+qmove Moves PBS batch job between queues -j join Merging output and error files
+qalter Alters a PBS job -k keep Retaining output and error files on execution host
+Tracejob <jobid> Print log information about a job -l resource_list Requesting job resources
+qselect Selects PBS batch jobs -M user_list Setting email recipient list
+pbs_rsub Creates a PBS advance or standing reservation -m MailOptions Specifying email notification
+pbs_rstat Shows status of PBS advance or standing reservations -N name Specifying a job name
+Job monitoring Job monitoring -o path Specifying path for output and error files
+qstat -x Job History -p priority Setting a job's priority
+qstat -f <jobid> Job status with all information Environment Variables Environment Variables
+qstat -ans Job status with comments and vnode info PBS_JOBID Job identifier given by PBS when the job is submitted. Created upon execution.
+Deleting jobs Deleting jobs PBS_JOBNAME Job name given by user. Created upon execution.
+qdel <jobid> kill a job PBS_NODEFILE The filename containing a list of vnodes assigned to the job.
+qdel -W force <jobid> Force kill a job PBS_O_WORKDIR Absolute path to directory where qsub is run. Value taken from user’s submission environment.
+Requesting Requesting equesting job resources job resources job resources TMPDIR Pathname of job’s scratch directory
+-l select=3:ncpus=2 Request for 3 chunks with 2 cpu each NCPUS Number of threads, defaulting to number of CPUs, on the vnode
+-l select=1:ncpus=4:mem=1gb 1 chunk with 4 cpus and 1 GB RAM OMP_NUM_THREADS Number of threads, defaulting to number of CPUs, on the vnode
+-l walltime=01:00:00 Request for 1 hour total wall time PBS_ARRAY_ID Identifier for job arrays. Consists of sequence number.
+-l cput=03:00:00 Request for 30 minutes CPU time PBS_ARRAY_INDEX Index number of subjob in job array.
+-l place=pack:exclhost Request node to be exclusively allocated to the job PBS_JOBDIR Pathname of job’s staging and execution directory on the primary execution host. 
+
+
+
+
+
+
+# PBS Pro command cheat sheet
+
+List nodes and their features
+
+```
+$ pbsnodes
+```
+
+---
+
+Run an interactive job on a node with 4 RTX 2080 GPUs, 8 CPUs, 90GB of RAM, for 2 hours
+
+```
+$  qsub -l ngpus=4 -l ncpus=8 -l mem=90G -l gputype=RTX2080 -l walltime=02:00:00   -I
+```
+
+Alternatively this can be compressed into
+
+```
+$ qsub -l ngpus=4:ncpus=8:mem=90G:gputype=RTX2080:walltime=02:00:00 -I
+```
+
+The `-I` flag indicates the interactive aspect of the job.
+
+---
+
+Cancel a job
+
+```
+$ qdel -p <job-id>
+```
+
+List information on queues
+
+```
+$ qstat
+```
+
+List current jobs owned by `$USER`
+
+```
+$ qstat -u $USER
+```
+
+---
+
+Mail notifications can be enabled through the `-m` toggle which takes one of the following options:
+
+- `n` - No mail will be sent.
+- `a` - Mail is sent when the job is aborted by the batch system.
+- `b` - Mail is sent when the job begins execution.
+- `e` - Mail is sent when the job terminates.
+- `j` - Mail is sent also for subjobs of an array job.  Option "j" must be combined with "a", "b", or "e".
+
+The mail user is specified via `-M <email-address>`. Alternatively setting `$PBS_O_MAIL` to 
+`<email-address>` and omitting the flag has the same effect.
+
+---
+
+Jobs can be given names through `-N <name>`.
+
+---
+
+If you want to export variables from the current environment to the job, pass the `-V` flag which passes 
+all current environment variables to the job's environment.
+
+---
+
+If you want to run one job after another, you can use the *depend* *additional attribute*, e.g.
+
+```
+$ qsub -W depend=afterok:<first-job-id> -l ncpus=8:ngpus=4:mem=90G:walltime=02:00:00 job-script.sh
+```
