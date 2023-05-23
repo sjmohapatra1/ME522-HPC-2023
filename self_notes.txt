@@ -754,3 +754,22 @@ If you want to run one job after another, you can use the *depend* *additional a
 ```
 $ qsub -W depend=afterok:<first-job-id> -l ncpus=8:ngpus=4:mem=90G:walltime=02:00:00 job-script.sh
 ```
+
+
+
+
+#PBS -l nodes=<node_name>
+You can also specify the number of processors:
+
+#PBS -l nodes=<node_name>:ppn=X
+Or you can request additional nodes, specified or unspecified:
+
+#PBS -l nodes=<node_name1>[:ppn=X][+<node_name2...]
+That gives you multiple specific nodes.
+
+#PBS -l nodes=<node_name>[:ppn=X][+Y[:ppn=Z]]
+This requests the specific node with X execution slots from that node, plus an additional Y nodes with Z execution slots each.
+
+Edit: To simply request a number of nodes and execution slots per node:
+
+PBS -l nodes=X:ppn=Y
